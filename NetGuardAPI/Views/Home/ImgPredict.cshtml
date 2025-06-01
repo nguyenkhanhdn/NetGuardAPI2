@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewData["Title"] = "Image Predict";
+}
+
+<h1>Image Predict</h1>
+
+<h3>Chọn file để upload</h3>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form method="post" asp-controller="Home" asp-action="ImgPredict"
+              enctype="multipart/form-data">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input type="file" name="fileUpload" class="form-control" />
+            <button type="submit" name="Upload" class="btn btn-primary">Upload</button>
+        </form>
+    </div>
+</div>
+<hr />
+
+@if (@ViewBag.Prediction != null)
+{    
+    if (@ViewBag.Prediction.Contains("porn"))
+    {
+        <strong>
+            ⚠️ Nội dung độc hại, bị nghiêm cấm.
+        </strong>
+    }
+    if (@ViewBag.Prediction.Contains("gore"))
+    {
+        <strong>
+            ⚠️ Nội dung độc hại, bị nghiêm cấm.
+        </strong>
+    }
+
+    if (@ViewBag.Prediction.Contains("control"))
+    {
+        <strong>
+            ✅ Nội dung hợp lệ, được phép upload.
+        </strong>
+    }
+}

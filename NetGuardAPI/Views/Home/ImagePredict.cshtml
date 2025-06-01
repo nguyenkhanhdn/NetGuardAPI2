@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = "Upload File qua API (.NET 8)";
+}
+
+<h2>Upload File</h2>
+
+<form id="uploadForm" enctype="multipart/form-data" method="post">
+    <input type="file" id="fileInput" />
+    <button type="button" onclick="uploadFile()">Nhận diện</button>
+</form>
+
+<div id="result" style="margin-top: 15px;"></div>
+
+@section Scripts
+{
+    <script>
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const resultDiv = document.getElementById('result');
+
+            if (fileInput.files.length === 0) {
+                resultDiv.innerText = "Vui lòng chọn file.";
+                resultDiv.style.color = "red";
+                return;
+            }
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            var url = "/api/Predict";
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerText = "✅ " + data.prediction + " (Prob: " + data.probability + ")";
+                    resultDiv.style.color = "green";
+                } else {
+                    resultDiv.innerText = "❌ " + "Error.";
+                    resultDiv.style.color = "red";
+                }
+            } catch (error) {
+                resultDiv.innerText = "❌ Lỗi khi gửi yêu cầu: " + error.message;
+                resultDiv.style.color = "red";
+            }
+        }
+    </script>
+}
+

@@ -1,0 +1,152 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<div id="carouselExampleCaptions" class="carousel slide">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="~/img/slide1.jpg" class="d-block w-100 h-75" alt="NetGuard For Kids">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>First slide label</h5>
+                <p>Some representative placeholder content for the first slide.</p>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="~/img/slide2.jpg" class="d-block w-100 h-75" alt="NetGuard For Kids">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Second slide label</h5>
+                <p>Some representative placeholder content for the second slide.</p>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="~/img/slide3.jpg" class="d-block w-100 h-75" alt="NetGuard For Kids">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Third slide label</h5>
+                <p>Some representative placeholder content for the third slide.</p>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+<div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" class="scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
+    <h4 id="scrollspyHeading1">🌐 Giới thiệu NetGuard For Kids API</h4>
+    <p>    
+    Bảo vệ trẻ em khỏi nội dung độc hại trên Internet bằng Trí tuệ nhân tạo (AI)
+    Net Guard API là nền tảng ứng dụng công nghệ trí tuệ nhân tạo (AI) tiên tiến nhằm bảo vệ trẻ em an toàn khi sử dụng Internet. API được thiết kế linh hoạt, có thể tích hợp dễ dàng vào các hệ thống giáo dục, trình duyệt, phần mềm học tập hoặc nền tảng kiểm soát nội dung.
+    <br/>
+    Với 4 chức năng chính, NetGuard API giúp phát hiện và ngăn chặn kịp thời các nội dung độc hại ở nhiều định dạng:
+    </p>
+    <p>
+    ✅ 1. Ngăn chặn nội dung văn bản độc hại
+    Tự động phân tích nội dung văn bản trong thời gian thực để phát hiện ngôn từ không phù hợp, đe dọa, bạo lực, khiêu dâm hoặc lừa đảo.
+
+    Ứng dụng AI xử lý ngôn ngữ tự nhiên (NLP) để hiểu ngữ cảnh sâu và xác định mức độ nguy hiểm của nội dung.
+    </p>
+    <p>
+    ✅ 2. Phát hiện hình ảnh độc hại
+    Sử dụng các mô hình deep learning hiện đại để quét và nhận diện hình ảnh có chứa nội dung khiêu dâm, bạo lực hoặc phản cảm.
+
+    Có thể áp dụng vào camera lớp học, ứng dụng học tập, hoặc hệ thống upload ảnh để lọc hình ảnh không phù hợp.
+    </p>
+    <p>
+    ✅ 3. Nhận diện video độc hại
+    Tự động phân tích các khung hình video để phát hiện hành vi hoặc hình ảnh nguy hiểm, không lành mạnh.
+
+    Tích hợp được với các nền tảng phát video hoặc học trực tuyến để ngăn video chứa nội dung gây hại.
+    </p>
+    <p>
+    ✅ 4. Xử lý âm thanh độc hại
+    Nhận diện ngôn từ bạo lực, đe dọa, hoặc kích động trong các đoạn ghi âm hoặc phát thanh trực tiếp.
+
+    Ứng dụng công nghệ AI nhận dạng giọng nói và phân tích âm thanh để đảm bảo môi trường tương tác bằng lời nói cũng an toàn cho trẻ.
+    </p>
+    <h4 id="scrollspyHeading2">Hướng dẫn sử dụng</h4>
+
+    <h5>Nhận diện với văn bản</h5>
+    <p>
+        ✅ 1. Mã nguồn trang HTML
+        <img src="~/img/htmlcode2.jpg" class="img-fluid" />
+        
+        <br/>
+        ✅ 2. Mã nguồn javascript
+        <pre>
+            //url = "https://netguard4kids/api/SE/Predict?text=" + content;
+
+            function predict() {
+                const content = document.getElementById('text-field').value.trim();
+            
+                var url = "/api/SE/Predict?text=" + content;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const resultDiv = document.getElementById('preResult');
+                    resultDiv.innerHTML = data.prediction + "<br />" + data.probability + "<br />" + data.score;
+                })
+                .catch(error => console.error('Unable to get items.', error));            
+            }
+        </pre>
+    </p>
+
+    <h5>Nhận diện với hình ảnh</h5>
+    <p>
+        ✅ 1. Mã nguồn trang HTML
+
+        <br/>
+        <img src="~/img/html-code.jpg" class="img-fluid" />
+        
+        <br/>
+
+        ✅ 2. Mã nguồn javascript
+        <br/>
+        <img src="~/img/jscode.jpg" class="img-fluid" />
+    </p>
+    
+
+</div>
+
+@* <div class="text-center">
+
+    <input type="text" id="textfield" placeholder="Make predict" class="form-control" />
+    <button value="Predict" class="btn btn-primary" onclick="predict()">Predict</button>
+
+    <hr/>
+    <div id="preResult"></div>
+</div> *@
+
+@section Scripts{
+    <script>
+        //
+        function predict() {
+            
+            var resultDiv = document.getElementById("preResult");
+            resultDiv.innerHTML = "Predicting...";
+
+            const content = document.getElementById('textfield').value.trim();
+            
+            var url = "/api/SE/Predict?text=" + content;
+            //alert(url);
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    //alert(JSON.stringify(data));
+                    const resultDiv = document.getElementById('preResult');
+                    resultDiv.innerHTML = data.prediction + "<br/>" + data.probability + "<br/>" + data.score;
+                })
+                .catch(error => console.error('Lỗi xảy ra: ', error));
+        }
+    </script>
+}
+

@@ -1,0 +1,214 @@
+﻿@{
+    ViewBag.Title = "Upload File qua API (.NET 8)";
+}
+
+<div class="contentarea">
+    <h1>Javascript to capture Photo</h1>
+    <h3>Select video</h3>
+    <input type="file" id="fileInput" accept="video/*" onchange="playVideo()" />
+    <br />
+    <div class="camera">
+        <video id="myvideo">Video stream not available.</video>
+    </div>
+
+    <div><button id="startbutton" onclick="takepicture()" style="display: none;">Take photo</button></div>
+
+    <canvas id="canvas"></canvas>
+    <div class="output">
+        <img id="photo" alt="The screen capture will appear in this box.">
+    </div>
+
+    @if (ViewBag.Prediction != null)
+
+    {
+
+        if (ViewBag.Prediction.Contains("porn"))
+
+        {
+            <strong>Nội dung độc hại, bị nghiêm cấm.</strong>
+        }
+
+        if (ViewBag.Prediction.Contains("gore"))
+
+        {
+            <strong>Nội dung độc hại, bị nghiêm cấm.</strong>
+        }
+
+        if (ViewBag.Prediction.Contains("control"))
+
+        {
+            <strong>Nội dung hợp lệ, được phép upload.</strong>
+        }
+
+    }
+</div>
+
+<style>
+    #video {
+        border: 1px solid black;
+        width: 640px;
+        height: 480px;
+    }
+
+    #photo {
+        border: 1px solid black;
+        width: 640px;
+        height: 480px;
+    }
+
+    #canvas {
+        display: none;
+    }
+
+    .camera {
+        width: 340px;
+        display: inline-block;
+    }
+
+    .output {
+        width: 340px;
+        display: inline-block;
+    }
+
+    #startbutton {
+        display: block;
+        position: relative;
+        margin-left: auto;
+        margin-right: auto;
+        bottom: 36px;
+        padding: 5px;
+        background-color: #6a67ce;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        font-size: 14px;
+        color: rgba(255, 255, 255, 1.0);
+        cursor: pointer;
+    }
+
+    .contentarea {
+        font-size: 16px;
+        font-family: Arial;
+        text-align: center;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        const video = document.getElementById('myvideo');
+        const canvas = document.getElementById('canvas');
+        const photo = document.getElementById('photo');
+        const resultList = document.createElement('ul');
+        document.body.appendChild(resultList);
+
+        let width = 640;
+        let height = 480;
+
+        let allPredictions = []; 
+
+        function playVideo() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const fileURL = URL.createObjectURL(file);
+            video.src = fileURL;
+
+            video.addEventListener('loadedmetadata', async () => {
+                height = video.videoHeight / (video.videoWidth / width);
+                video.width = width;
+                video.height = height;
+
+                await video.play();
+                autoCaptureEachSecond(video.duration); 
+            });
+        }
+
+        async function autoCaptureEachSecond(durationInSeconds) {
+            const captureInterval = 4;
+            for (let time = 0; time < durationInSeconds; time += captureInterval) {
+                await seekVideo(time);
+                const dataURL = captureFrame();
+                await sendImage(dataURL, time);
+                await wait(500); 
+            }
+
+            const { mostFrequent, count } = getMostFrequentPrediction(allPredictions);
+            const summary = document.createElement('p');
+            summary.innerHTML = `<span style="font-size: 28px; font-weight: bold;">📌 Final Predict: ${mostFrequent}</span><br>`;
+
+            if (mostFrequent === 'control') {
+                summary.innerHTML += `⚠️ Video độc hại, bị nghiêm cấm.`;
+            } else {
+                summary.innerHTML += `✅ Video, được phép upload.`;
+            }
+
+            document.body.appendChild(summary);
+
+        }
+
+        function seekVideo(time) {
+            return new Promise((resolve) => {
+                video.currentTime = time;
+                video.onseeked = () => resolve();
+            });
+        }
+
+        function captureFrame() {
+            canvas.width = width;
+            canvas.height = height;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, width, height);
+            const dataURL = canvas.toDataURL('image/png');
+            photo.setAttribute('src', dataURL); // Hiển thị ảnh hiện tại
+            return dataURL;
+        }
+
+        function wait(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function sendImage(dataURL, time) {
+            const imagebase64data = dataURL.replace('data:image/png;base64,', '');
+            try {
+                const response = await $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("VideoPredict", "Home")',
+                    data: { img_data: imagebase64data },
+                    dataType: 'text'
+                });
+
+                allPredictions.push(response); // Thêm vào danh sách
+
+                const li = document.createElement('li');
+                li.textContent = `⏱${time}s: ${response}`;
+                resultList.appendChild(li);
+            } catch (error) {
+                console.error("Lỗi khi gửi ảnh:", error);
+            }
+        }
+
+        function getMostFrequentPrediction(predictions) {
+            const frequencyMap = {};
+            for (const p of predictions) {
+                frequencyMap[p] = (frequencyMap[p] || 0) + 1;
+            }
+
+            let maxCount = 0;
+            let mostFrequent = '';
+            for (const [prediction, count] of Object.entries(frequencyMap)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    mostFrequent = prediction;
+                }
+            }
+
+            return { mostFrequent, count: maxCount };
+        }
+
+        function takepicture() {
+            const dataURL = captureFrame();
+            photo.setAttribute('src', dataURL);
+            // Không gửi ảnh ở đây vì đã có autoCapture
+        }
+    </script>
+
+}
